@@ -9,7 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequestMapping("/api")
 public class GreetingController {
 
-    //UC1
+    private final GreetingService greetingService;
+
+    @Autowired
+    public GreetingController(GreetingService greetingService) {
+        this.greetingService = greetingService;
+    }
+
+    // UC1: Basic Greetings
     @GetMapping("/greet")
     public Greeting getGreeting() {
         return new Greeting("Hello from BridgeLabz");
@@ -30,17 +37,17 @@ public class GreetingController {
         return new Greeting("Greeting deleted");
     }
 
-
-    //UC2
-    private final GreetingService greetingService;
-
-    @Autowired
-    public GreetingController(GreetingService greetingService) {
-        this.greetingService = greetingService;
+    // UC2: Greeting Service with Default Message
+    @GetMapping("/greetservice")
+    public Greeting getDefaultGreeting() {
+        return new Greeting(greetingService.getGreetingMessage(null, null));
     }
 
-    @GetMapping("/greetservice")
-    public Greeting getGreetings() {
-        return new Greeting(greetingService.getGreetingMessage());
+    // UC3: Personalized Greeting with First Name and Last Name
+    @GetMapping("/greetservice/custom") // UC3 Starts here
+    public Greeting getCustomGreeting(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName) {
+        return new Greeting(greetingService.getGreetingMessage(firstName, lastName));
     }
 }
